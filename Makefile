@@ -1,5 +1,6 @@
 CC = gcc
-# CFLAGS = -std=c++11
+CFLAGS = -MMD
+# CFLAGS = -MMD -std=c++11
 INCLUDES = src
 
 DEBUG ?= 0
@@ -37,5 +38,5 @@ ifneq "$(MAKECMDGOALS)" "clean"
 endif
 
 .PHONY: clean
-	clean:
+clean:
 	rm -f $(TARGET) $(OBJECTS) $(DEPENDS)

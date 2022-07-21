@@ -42,7 +42,7 @@ void freeVM()
 
 void push(Value value) {
   *vm.stackTop = value;
-  vm.stackTop++;
+  ++vm.stackTop;
 }
 
 Value pop() {
@@ -94,7 +94,7 @@ static InterpretResult run()
   {
 #ifdef DEBUG_TRACE_EXECUTION
     printf("          ");
-    for(Value* slot = vm.stack; slot < vm.stackTop; slot++)
+    for(Value* slot = vm.stack; slot < vm.stackTop; ++slot)
     {
       printf("[ ");
       printValue(*slot);

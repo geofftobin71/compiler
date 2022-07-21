@@ -147,7 +147,7 @@ static void endCompiler()
 #ifdef DEBUG_PRINT_CODE
   if(!parser.hadError)
   {
-    disassembleChunk(currentChunk(), "code");
+    // disassembleChunk(currentChunk(), "code");
   }
 #endif
 }

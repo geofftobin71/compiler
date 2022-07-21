@@ -72,6 +72,8 @@ static void runFile(const char* path)
 
 int main(int argc, const char* argv[])
 {
+  // printf("V %ld\n", sizeof(Value));
+
   initVM();
 
   if(argc == 1)

@@ -6,6 +6,33 @@
 typedef struct Obj Obj;
 typedef struct ObjString ObjString;
 
+#ifdef NAN_BOXING
+
+typedef uint64_t Value;
+
+#define AS_NUMBER(value)    valueToNum(value)
+
+#define NUMBER_VAL(num)     numToValue(num)
+
+static inline Value numToValue(double num)
+{
+  Value value;
+  memcpy(&value, &num, sizeof(double));
+  return value;
+}
+
+static inline double valueToNum(Value value)
+{
+  union {
+    uint64_t bits;
+    double num;
+  } data;
+  data.bits = value;
+  return data.num;
+}
+
+#else
+
 typedef enum
 {
   VAL_BOOL,
@@ -39,6 +66,8 @@ typedef struct
 #define NIL_VAL           ((Value){VAL_NIL, {.number = 0}})
 #define NUMBER_VAL(value) ((Value){VAL_NUMBER, {.number = value}})
 #define OBJ_VAL(object)   ((Value){VAL_OBJ, {.obj = (Obj*)object}})
+
+#endif
 
 typedef struct
 {

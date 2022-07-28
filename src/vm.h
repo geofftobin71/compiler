@@ -5,13 +5,10 @@
 
 typedef struct
 {
-  uint8_t*  code;
+  uint16_t*  code;
 } VM;
 
-extern VM vm;
-
-void initVM();
-void freeVM();
-int compile(const char* source);
+void initVM(VM* vm);
+void freeVM(VM* vm);
 
 #endif

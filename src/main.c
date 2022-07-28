@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "vm.h"
+#include "compiler.h"
 
 static char* readFile(const char* path)
 {
@@ -49,18 +50,20 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  initVM();
+  VM vm;
+
+  initVM(&vm);
 
   char* source = readFile(argv[1]);
-  int result = compile(source);
+  bool result = compile(&vm, source);
   free(source);
 
-  if(result == 0)
+  if(result)
   {
     // run();
   }
 
-  freeVM();
+  freeVM(&vm);
 
   return 0;
 }

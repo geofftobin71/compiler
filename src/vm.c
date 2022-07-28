@@ -1,43 +1,14 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "vm.h"
-#include "scanner.h"
 
-VM vm;
-
-void initVM()
+void initVM(VM* vm)
 {
-  vm.code = malloc(256 * 1024);
+  vm->code = malloc(256 * 1024);
 }
 
-void freeVM()
+void freeVM(VM* vm)
 {
-  free(vm.code);
-}
-
-int compile(const char* source)
-{
-  initScanner(source);
-
-  int line = -1;
-  for(;;)
-  {
-    Token token = scanToken();
-    if(token.line != line)
-    {
-      printf("%4d ", token.line);
-      line = token.line;
-    }
-    else
-    {
-      printf("   | ");
-    }
-    printf("%2d '%.*s'\n", token.type, token.length, token.start); 
-
-    if(token.type == TOKEN_EOF) break;
-  }
-
-  return 0;
+  free(vm->code);
 }
 

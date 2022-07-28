@@ -1,28 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdint.h>
 
-#include "common.h"
-#include "chunk.h"
-#include "debug.h"
 #include "vm.h"
-
-static void repl()
-{
-  char line[1024];
-  for(;;)
-  {
-    printf("> ");
-
-    if(!fgets(line, sizeof(line), stdin))
-    {
-      printf("\n");
-      break;
-    }
-
-    interpret(line);
-  }
-}
 
 static char* readFile(const char* path)
 {
@@ -31,7 +11,7 @@ static char* readFile(const char* path)
   if(file == NULL)
   {
     fprintf(stderr, "Could not open file \"%s\".\n", path);
-    exit(74);
+    exit(1);
   }
 
   fseek(file, 0L, SEEK_END);
@@ -43,7 +23,7 @@ static char* readFile(const char* path)
   if(buffer == NULL)
   {
     fprintf(stderr, "Not enough memory to read \"%s\".\n", path);
-    exit(74);
+    exit(1);
   }
 
   size_t bytesRead = fread(buffer, sizeof(char), fileSize, file);
@@ -51,7 +31,8 @@ static char* readFile(const char* path)
   if(bytesRead < fileSize)
   {
     fprintf(stderr, "Could not read file \"%s\".\n", path);
-    exit(74);
+    free(buffer);
+    exit(1);
   }
 
   buffer[bytesRead] = '\0';
@@ -60,51 +41,23 @@ static char* readFile(const char* path)
   return buffer;
 }
 
-static void runFile(const char* path)
+int main(int argc, char* argv[])
 {
-  char* source = readFile(path);
-  InterpretResult result = interpret(source);
-  free(source); 
-
-  if(result == INTERPRET_COMPILE_ERROR) exit(65);
-  if(result == INTERPRET_RUNTIME_ERROR) exit(70);
-}
-
-int main(int argc, const char* argv[])
-{
-  // printf("V %ld\n", sizeof(Value));
+  if(argc < 2)
+  {
+    fprintf(stderr, "\nusage: gt <source>\n\n");
+    return 1;
+  }
 
   initVM();
 
-  if(argc == 1)
+  char* source = readFile(argv[1]);
+  int result = compile(source);
+  free(source);
+
+  if(result == 0)
   {
-    repl();
-  }
-  else if(argc == 2)
-  {
-    runFile(argv[1]);
-  }
-  else
-  {
-    const char* exename = argv[0];
-
-    while(*exename && *exename != '/')
-    {
-      ++exename;
-    }
-
-    if(*exename == '\0')
-    {
-      exename = argv[0];
-    }
-
-    if(*exename == '/')
-    {
-      ++exename;
-    }
-
-    fprintf(stderr, "Usage: %s [path]\n", exename);
-    exit(64);
+    // run();
   }
 
   freeVM();

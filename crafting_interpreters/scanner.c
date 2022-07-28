@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 
+#include "common.h"
 #include "scanner.h"
 
 typedef struct
@@ -35,24 +35,24 @@ static bool isAtEnd()
   return *scanner.current == '\0';
 }
 
-static char nextChar()
+static char advance()
 {
   scanner.current++;
   return scanner.current[-1];
 }
 
-static char peekChar()
+static char peek()
 {
   return *scanner.current;
 }
 
-static char peekNextChar()
+static char peekNext()
 {
   if(isAtEnd()) return '\0';
   return scanner.current[1];
 }
 
-static bool matchChar(char expected)
+static bool match(char expected)
 {
   if(isAtEnd()) return false;
   if(*scanner.current != expected) return false;
@@ -84,23 +84,23 @@ static void skipWhitespace()
 {
   for(;;)
   {
-    char c = peekChar();
+    char c = peek();
     switch(c)
     {
       case ' ':
       case '\r':
       case '\t':
-        nextChar();
+        advance();
         break;
       case '\n':
         scanner.line++;
-        nextChar();
+        advance();
         break;
       case '/':
-        if(peekNextChar() == '/')
+        if(peekNext() == '/')
         {
           // A comment goes until the end of the line.
-          while(peekChar() != '\n' && !isAtEnd()) nextChar();
+          while(peek() != '\n' && !isAtEnd()) advance();
         }
         else
         {
@@ -178,21 +178,21 @@ static TokenType identifierType()
 
 static Token identifier()
 {
-  while(isAlpha(peekChar()) || isDigit(peekChar())) nextChar();
+  while(isAlpha(peek()) || isDigit(peek())) advance();
   return makeToken(identifierType());
 }
 
 static Token number()
 {
-  while(isDigit(peekChar())) nextChar();
+  while(isDigit(peek())) advance();
 
   // Look for a fractional part.
-  if(peekChar() == '.' && isDigit(peekNextChar()))
+  if(peek() == '.' && isDigit(peekNext()))
   {
     // Consume the ".".
-    nextChar();
+    advance();
 
-    while(isDigit(peekChar())) nextChar();
+    while(isDigit(peek())) advance();
   }
 
   return makeToken(TOKEN_NUMBER);
@@ -200,16 +200,16 @@ static Token number()
 
 static Token string()
 {
-  while(peekChar() != '"' && !isAtEnd())
+  while(peek() != '"' && !isAtEnd())
   {
-    if(peekChar() == '\n') scanner.line++;
-    nextChar();
+    if(peek() == '\n') scanner.line++;
+    advance();
   }
 
-  if(isAtEnd()) return errorToken("Unterminated string");
+  if(isAtEnd()) return errorToken("Unterminated string.");
 
   // The closing quote.
-  nextChar();
+  advance();
   return makeToken(TOKEN_STRING);
 }
 
@@ -221,7 +221,7 @@ Token scanToken()
 
   if(isAtEnd()) return makeToken(TOKEN_EOF);
 
-  char c = nextChar();
+  char c = advance();
 
   if(isAlpha(c)) return identifier();
   if(isDigit(c)) return number();
@@ -251,15 +251,15 @@ Token scanToken()
     case '*':
       return makeToken(TOKEN_STAR);
     case '!':
-      return makeToken(matchChar('=') ? TOKEN_BANG_EQUAL : TOKEN_BANG);
+      return makeToken(match('=') ? TOKEN_BANG_EQUAL : TOKEN_BANG);
     case '=':
-      return makeToken(matchChar('=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
+      return makeToken(match('=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL);
     case '<':
-      return makeToken(matchChar('=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
+      return makeToken(match('=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
     case '>':
-      return makeToken(matchChar('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
+      return makeToken(match('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
     case '"': return string();
   }
 
-  return errorToken("Unexpected character");
+  return errorToken("Unexpected character.");
 }

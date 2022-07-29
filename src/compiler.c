@@ -71,8 +71,8 @@ static void consume(TokenType type, const char* message)
   errorAtCurrent(message);
 }
 
-static void expression()
-{
+static void emitCode(uint16_t opcode) {
+    writeCode(opcode, parser.previous.line);
 }
 
 bool compile(VM* vm, const char* source)

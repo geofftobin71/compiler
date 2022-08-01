@@ -58,6 +58,7 @@ int main(int argc, char* argv[])
 
   writeCode(&vm, OP_FLOAT_LITERAL, 122);
   writeFloatLiteral(&vm, 123.456f, 122);
+  writeCode(&vm, OP_NEGATE, 122);
   writeCode(&vm, OP_RETURN, 123);
 
   run(&vm);

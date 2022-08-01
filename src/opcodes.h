@@ -3,6 +3,7 @@
 
 typedef enum {
   OP_FLOAT_LITERAL,
+  OP_NEGATE,
   OP_RETURN,
 } OpCode;
 

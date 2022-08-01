@@ -80,6 +80,7 @@ bool run(VM* vm)
           push(vm, READ_OPCODE());
           break;
         }
+      case OP_NEGATE:   push(vm, -pop(vm)); break;
       case OP_RETURN:
         {
           const uint32_t c = pop(vm);

@@ -32,6 +32,8 @@ uint32_t disassembleInstruction(VM* vm, uint32_t offset)
   {
     case OP_FLOAT_LITERAL:
       return floatLiteralInstruction("OP_FLOAT_LITERAL", vm, offset);
+    case OP_NEGATE:
+      return simpleInstruction("OP_NEGATE", offset);
     case OP_RETURN:
       return simpleInstruction("OP_RETURN", offset);
     default:

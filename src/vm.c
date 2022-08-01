@@ -12,8 +12,15 @@
 #define DATA_SIZE (256 * 1024)
 #define STRINGS_SIZE (256 * 1024)
 
+static void resetStack(VM* vm)
+{
+  vm->stack_top = vm->stack;
+}
+
 void initVM(VM* vm)
 {
+  resetStack(vm);
+
   vm->code = malloc(CODE_SIZE);
   vm->lines = malloc(CODE_SIZE);
   vm->data = malloc(DATA_SIZE);
@@ -32,6 +39,18 @@ void freeVM(VM* vm)
   free(vm->strings);
 }
 
+void push(VM* vm, uint32_t value)
+{
+  *vm->stack_top = value;
+  ++vm->stack_top;
+}
+
+uint32_t pop(VM* vm)
+{
+  --vm->stack_top;
+  return *vm->stack_top;
+}
+
 bool run(VM* vm)
 {
   vm->ip = vm->code;
@@ -41,6 +60,15 @@ bool run(VM* vm)
   for(;;)
   {
 #ifdef DEBUG_TRACE_EXECUTION
+    printf("          ");
+    for(uint32_t* slot = vm->stack; slot < vm->stack_top; ++slot)
+    {
+      printf("[ ");
+      printf("%g", *(float*)slot);
+      printf(" ]");
+    }
+    printf("\n");
+
     disassembleInstruction(vm, (uint32_t)(vm->ip - vm->code));
 #endif
 
@@ -49,13 +77,14 @@ bool run(VM* vm)
     {
       case OP_FLOAT_LITERAL:
         {
-          const uint32_t c = READ_OPCODE();
-          const float v = *(float*)(&c);
-          printf("%g\n", v);
+          push(vm, READ_OPCODE());
           break;
         }
       case OP_RETURN:
         {
+          const uint32_t c = pop(vm);
+          const float result = *(float*)(&c);
+          printf("%g\n", result);
           return true;
         }
     }

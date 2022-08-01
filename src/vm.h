@@ -4,9 +4,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define STACK_MAX 256
+
 typedef struct
 {
   uint32_t* ip;
+
+  uint32_t  stack[STACK_MAX];
+  uint32_t* stack_top;
 
   uint32_t* code;
   uint32_t* lines;

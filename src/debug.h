@@ -4,5 +4,6 @@
 #include "vm.h"
 
 void disassemble(VM* vm);
+uint32_t disassembleInstruction(VM* vm, uint32_t offset);
 
 #endif

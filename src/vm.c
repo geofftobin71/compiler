@@ -3,7 +3,10 @@
 #include <string.h>
 
 #include "vm.h"
+#include "debug.h"
 #include "opcodes.h"
+
+#define DEBUG_TRACE_EXECUTION
 
 #define CODE_SIZE (256 * 1024)
 #define DATA_SIZE (256 * 1024)
@@ -37,6 +40,10 @@ bool run(VM* vm)
 
   for(;;)
   {
+#ifdef DEBUG_TRACE_EXECUTION
+    disassembleInstruction(vm, (uint32_t)(vm->ip - vm->code));
+#endif
+
     uint32_t opcode;
     switch(opcode = READ_OPCODE())
     {

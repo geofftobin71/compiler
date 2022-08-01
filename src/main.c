@@ -60,8 +60,6 @@ int main(int argc, char* argv[])
   writeFloatLiteral(&vm, 123.456f, 122);
   writeCode(&vm, OP_RETURN, 123);
 
-  disassemble(&vm);
-
   run(&vm);
 
   /*

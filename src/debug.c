@@ -16,7 +16,7 @@ static uint32_t simpleInstruction(const char* name, uint32_t offset)
   return offset + 1;
 }
 
-static uint32_t disassembleInstruction(VM* vm, uint32_t offset)
+uint32_t disassembleInstruction(VM* vm, uint32_t offset)
 {
   if(offset > 0 && vm->lines[offset] == vm->lines[offset - 1])
   {

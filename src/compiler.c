@@ -13,6 +13,12 @@ typedef struct
 
 Parser parser;
 
+static void initParser()
+{
+  parser.hadError = false;
+  parser.panicMode = false;
+}
+
 static void errorAt(Token* token, const char* message)
 {
   if(parser.panicMode) return;
@@ -71,19 +77,15 @@ static void consume(TokenType type, const char* message)
   errorAtCurrent(message);
 }
 
-static void emitCode(uint16_t opcode) {
-    writeCode(opcode, parser.previous.line);
-}
+// writeCode(vm, opcode, parser.previous.line);
 
 bool compile(VM* vm, const char* source)
 {
   initScanner(source);
-
-  parser.hadError = false;
-  parser.panicMode = false;
+  initParser();
 
   nextToken();
-  expression();
+  // expression();
   consume(TOKEN_EOF, "Expect end of expression.");
 
   return !parser.hadError;

@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "vm.h"
 #include "compiler.h"
+#include "debug.h"
+#include "opcodes.h"
+#include "vm.h"
 
 static char* readFile(const char* path)
 {
@@ -54,6 +56,15 @@ int main(int argc, char* argv[])
 
   initVM(&vm);
 
+  writeCode(&vm, OP_FLOAT_LITERAL, 122);
+  writeFloatLiteral(&vm, 123.456f, 122);
+  writeCode(&vm, OP_RETURN, 123);
+
+  disassemble(&vm);
+
+  run(&vm);
+
+  /*
   char* source = readFile(argv[1]);
   bool result = compile(&vm, source);
   free(source);
@@ -62,6 +73,7 @@ int main(int argc, char* argv[])
   {
     // run();
   }
+  */
 
   freeVM(&vm);
 

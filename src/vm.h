@@ -1,10 +1,13 @@
 #ifndef _vm_h_
 #define _vm_h_
 
+#include <stdbool.h>
 #include <stdint.h>
 
 typedef struct
 {
+  uint32_t* ip;
+
   uint32_t* code;
   uint32_t* lines;
   uint32_t* data;
@@ -17,8 +20,10 @@ typedef struct
 
 void initVM(VM* vm);
 void freeVM(VM* vm);
+bool run(VM* vm);
 
 uint32_t writeCode(VM* vm, uint32_t opcode, uint32_t line);
+uint32_t writeFloatLiteral(VM* vm, float v, uint32_t line);
 uint32_t writeData(VM* vm, uint32_t data);
 uint32_t writeString(VM* vm, const char* string, uint32_t length);
 
